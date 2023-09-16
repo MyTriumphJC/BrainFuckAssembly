@@ -1,10 +1,10 @@
-#BrainFuckAssembly
+# BrainFuckAssembly
 
 As the name suggests, this is an assembly-inspired language that compiles to pure brainfuck.
 
-##Here is a list of all the currently supported operations (and their syntax):
+## Here is a list of all the currently supported operations (and their syntax):
 
-###Commands Directly Correlated to Brainfuck
+### Commands Directly Correlated to Brainfuck
 `INC $$`          Increment address $$
 `DEC $$`          Decrement address $$
 `GET $$`          Get one character from the user and put it in address $$
@@ -13,7 +13,7 @@ As the name suggests, this is an assembly-inspired language that compiles to pur
 `RNZ $$`          ReturnNotZero at address $$
 `RAW $$ "BFCode"` Run the raw brainfuck code BFCode at address $$. Assumes that the code also ends at address $$
 
-###QoL Commands
+### QoL Commands
 `ADD $$ ##`       Add ## to address $$
 `SUB $$ ##`       Subtract ## from address $$
 `CLR $$`          Resets address $$ to 0
@@ -21,14 +21,14 @@ As the name suggests, this is an assembly-inspired language that compiles to pur
 `CPY $$ $$ $$`    Like MOV, but uses the third address as a buffer so as to not destroy the first address. Ex, for memory \[A, B, C], CPY $A $B $C would produce \[A+C, B+A, 0]
 `DSP $$ "Msg"`    Uses address $$ as well as the 5 subsequent memory addresses to display the string Msg. Spaces are not allowed in the string; you must use \s in place of all spaces
 
-###Subprocesses*
+### Subprocesses*
 `JMP "LblName"`   Jump to label "LblName"
 `LBL "LblName"`   Identifies label "LblName"
 `RTS`             Return To Sender
 
 \*Note that every LBL must have a corresponding RTS, ***BEFORE ANY OTHER LBL***
 
-###Misc.
+### Misc.
 `EOP`             End Of Program (Optional, the program does not check for this)
 `NOP`             No-Op command (Does literally nothing)
 
