@@ -29,8 +29,8 @@ As the name suggests, this is an assembly-inspired language that compiles to pur
 \*Note that every LBL must have a corresponding RTS, ***BEFORE ANY OTHER LBL***
 
 ### Misc.
-`EOP`             End Of Program (Optional, the program does not check for this)
-`NOP`             No-Op command (Does literally nothing)
+- `EOP`             End Of Program (Optional, the program does not check for this)
+- `NOP`             No-Op command (Does literally nothing)
 
 You may also add line comments with `;`
 
