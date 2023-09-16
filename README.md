@@ -11,7 +11,7 @@ As the name suggests, this is an assembly-inspired language that compiles to pur
 - `OUT $$`          Output the value at address $$ as an ascii character
 - `JIZ $$`          JumpIfZero at address $$
 - `RNZ $$`          ReturnNotZero at address $$
-- `RAW $$ "BFCode"` Run the raw brainfuck code BFCode at address $$. Assumes that the code also ends at address \$$
+- `RAW $$ "BFCode"` Run the raw brainfuck code BFCode at address \$$. Assumes that the code also ends at address \$$
 
 ### QoL Commands
 - `ADD $$ ##`       Add ## to address $$
