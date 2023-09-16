@@ -1,0 +1,160 @@
+
+; 'Please keyboard spam to generate a random seed: '
+DSP $0 "Please\skeyboard\sspam\sto\sgenerate\sa\srandom\sseed:\s"
+
+JMP "GetInt"
+MOV $3 $0
+
+; $0 holds the number
+ADD $1 #100
+RAW $0 "[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>>+<<"
+; $0 is already clear from the DIVMOD algorithm above
+CLR $1
+; $2 holds a pseudo-random number in the range [1, 100]
+
+; Spams a bunch (40) of newlines to pseudo-clear the console window
+; Also initializes $0 to #10 to function as the turn number
+RAW $0 "++++++++++........................................"
+
+; $1 is the Turn Number as an ascii character
+ADD $1 #58 ; One character larger than ascii '9'
+
+; 'The goal of the game is to guess the random number from 1 to 100 in 10 tries'
+CLR $3
+DSP $3 "\nThe\sgoal\sof\sthe\sgame\sis\sto\sguess\sthe\srandom\snumber\sfrom\s1\sto\s100\sin\s10\stries.\n"
+
+; Starts the game loop
+JIZ $0
+   JMP "GameLoop"
+RNZ $0
+
+JIZ $1
+   ; $1 != 0 aka player lost
+   CLR $1
+   CLR $3
+   CLR $4
+   CLR $5
+   DSP $3 "\nYou\sLost!\sThe\snumber\swas:\s"
+   RAW $2 ">>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[>++++++[-<++++++++>]<.<<+>+>[-]]<[<[->-<]++++++[->++++++++<]>.[-]]<<++++++[-<++++++++>]<.[-]<<[-<+>]<"
+   CLR $2
+RNZ $1
+EOP
+
+; ========================================================================
+; ========================================================================
+
+LBL "GameLoop"
+CLR $3
+DSP $3 "Guess:\s"
+
+JMP "GetInt"
+; Guess is stored in $3
+; Every memory location after $3 is empty
+
+; Copies guess ($3) to $4
+CPY $3 $4 $5
+
+; Copies solution ($2) to $5
+CPY $2 $5 $6
+
+; Check if guess == solution
+ADD $6 #1      ; Increment 'success' flag
+RAW $5 "[<<->>-]"
+JIZ $3         ; If guess != solution
+   SUB $6 #1   ; Clear 'success' flag
+   CLR $3
+RNZ $3
+JIZ $6         ; Check if 'success' flag was cleared
+   ADD $3 #1   ; Increment $3 to 1
+   SUB $6 #1
+RNZ $6
+; $3 is 1 if guess == solution ($2), 0 otherwise
+
+; Copies solution ($2) to $5 (again)
+CPY $2 $5 $6
+
+; Check if guess ($4) < solution ($5)
+ADD $8 #1               ; sol != 0 flag
+CPY $5 $7 $6            ; Copies $5 to $7
+MOV $4 $6               ; Moves guess ($4) to $6
+ADD $4 #1               ; Increments 'lesser' flag ($4)
+RAW $7 "[>-]>[<<<<->>[-]>>->]<+<" ; If sol == 0, clear everything (false)
+JIZ $6
+   SUB $7 #1
+   RAW $7 "[>-]>[<<<<->>[-]+>>->]<+<" ; If sol == 0, clear everything (false)
+   SUB $6 #1
+RNZ $6
+; $4 is 1 if guess < solution, 0 otherwise
+
+; Clears out the locations used in the above process
+CLR $5
+CLR $6
+CLR $7
+CLR $8
+
+ADD $5 #1
+JIZ $3  ; $3 == 1 aka guess == solution
+   CLR $0
+   CLR $1
+   CLR $2
+   CLR $3
+   CLR $4
+   CLR $5
+   DSP $0 "That's\sCorrect!\nYou\sWin!!"
+RNZ $3
+JIZ $5  ; $3 == 0
+   ; Rest of game logic
+   CLR $5
+   ADD $3 #1
+   
+   JIZ $4  ; $4 == 1 aka guess < solution
+      CLR $3
+      CLR $4
+      DSP $3 "\nToo\sLow!\n"
+   RNZ $4
+   JIZ $3  ; $4 == 0 aka guess > solution
+      CLR $3
+      DSP $3 "\nToo\sHigh!\n"
+   RNZ $3
+   
+   SUB $1 #1
+   
+   DSP $3 "You\shave\s"
+   OUT $1    ; Turn num as ascii character
+   DSP $3 "\sturns\sleft.\n"
+   
+   SUB $0 #1
+RNZ $5
+RTS
+
+; ========================================================================
+; ========================================================================
+
+LBL "GetInt"
+ADD $4 #1
+JIZ $4                  ; Loop while $4 is non-zero
+   CLR $4               ; Clear $4 (Assume quit) 
+   GET $5
+   JIZ $5               ; Checks for EOF = 0
+      ADD $5 #1
+      JIZ $5            ; Checks for EOF = -1
+         SUB $5 #11
+         JIZ $5         ; Checks for newline (ASCII 10)
+            SUB $5 #38  ; Gets numerical character between 0 and 9
+            
+            JIZ $3
+               SUB $3 #1
+               ADD $5 #10
+            RNZ $3
+            
+            ; MOV doesn't clear and can be used to add two memory locations
+            MOV $5 $3
+            
+            ADD $4 #1   ; Make $4 non-zero (Continue the loop)
+         RNZ $5
+      RNZ $5
+   RNZ $5
+RNZ $4
+; Input is stored in $3
+RTS
+
